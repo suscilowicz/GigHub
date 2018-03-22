@@ -4,3 +4,5 @@
 
 /.vs/GigHub/v15/sqlite3
 /.vs
+/bin
+/obj
