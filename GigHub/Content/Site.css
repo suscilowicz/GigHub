@@ -184,3 +184,7 @@ h6,
 .popover-notifications ul.notifications > li .highlight {
   font-weight: bold;
 }
+#searchGigs {
+  width: 300px;
+  box-shadow: none;
+}

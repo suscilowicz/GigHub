@@ -5,6 +5,7 @@ using System;
 using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
+using Microsoft.Ajax.Utilities;
 
 namespace GigHub.Controllers
 {
@@ -104,6 +105,11 @@ namespace GigHub.Controllers
             return View("GigForm", viewModel);
         }
 
+        public ActionResult Search(GigsViewModel viewModel)
+        {
+            return RedirectToAction("Index", "Home", new {query = viewModel.SearchTerm});
+        }
+
 
         [Authorize]
         [HttpPost]
@@ -148,6 +154,23 @@ namespace GigHub.Controllers
             _context.SaveChanges();
 
             return RedirectToAction("Mine", "Gigs");
+        }
+        
+        public ActionResult Details(int id)
+        {
+            var userId = User.Identity.GetUserId();
+            var gig = _context.Gigs
+                .Include(g => g.Artist)
+                .Single(g => g.Id == id);
+
+            var viewModel = new GigDetailsViewModel
+            {
+                Gig = gig,
+                UserIsGoing = _context.Attendances.Any(x => x.GigId == id && x.AttendeeId == userId),
+                ShowAction = User.Identity.IsAuthenticated
+            };
+
+            return View("Details", viewModel);
         }
 
     }
