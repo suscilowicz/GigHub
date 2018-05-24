@@ -25,5 +25,36 @@ namespace GigHub.Repositories
                 .ToList();
         }
 
+        public Gig GetGigWithAttendees(int gigId)
+        {
+            return _context.Gigs
+                .Include(g => g.Attendances.Select(a => a.Attendee))
+                .SingleOrDefault(g => g.Id == gigId);
+        }
+
+        public IEnumerable<Gig> GetMineGigs(string userId)
+        {
+            return _context.Gigs
+                .Where(g => g.ArtistId == userId && g.DateTime > DateTime.Now && !g.IsCanceled)
+                .Include(g => g.Genre)
+                .ToList();
+        }
+
+        public Gig GetGig(int id)
+        {
+            return _context.Gigs
+                .Include(g => g.Artist)
+                .Include(g => g.Genre)
+                .SingleOrDefault(g => g.Id == id);
+        }
+
+        public IEnumerable<Gig> GetGigsOfFollowingArtist(IEnumerable<string> following)
+        {
+            return _context.Gigs
+                .Where(g => following.Any(f => f.Equals(g.ArtistId)))
+                .Include(g => g.Artist)
+                .Include(g => g.Genre)
+                .ToList();
+        }
     }
 }
